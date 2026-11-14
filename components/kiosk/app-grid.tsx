@@ -134,7 +134,9 @@ function AppCard({ app, status }: { app: KioskApp; status?: Status }) {
             height={96}
             unoptimized
             draggable={false}
-            className="size-24"
+            // Riempie il riquadro (96px meno il bordo) in entrambe le
+            // dimensioni: niente logo schiacciato né warning di next/image.
+            className="size-full"
           />
         </span>
         {status && (
