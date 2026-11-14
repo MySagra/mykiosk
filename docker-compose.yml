@@ -1,0 +1,30 @@
+# Installazione on-site: il kiosk gira sul server MySagra (192.168.50.100)
+# accanto alle altre app; il portatile apre http://192.168.50.100:3036
+services:
+  mykiosk:
+    image: mysagra-mykiosk:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mykiosk
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      # Certificato della CA locale, come per le altre app: serve al
+      # controllo di stato per fidarsi degli URL https on-site.
+      - NODE_EXTRA_CA_CERTS=/app/rootCA.pem
+    volumes:
+      - ./rootCA.pem:/app/rootCA.pem:ro
+    ports:
+      - "3036:3036"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

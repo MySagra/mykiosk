@@ -1,0 +1,50 @@
+# Stesso schema di MyCassa/MyNumeri: build multi-stage, output standalone,
+# utente non root. Node 24 LTS (il 20 delle altre app è fuori supporto).
+FROM node:24-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+ENV NEXT_TELEMETRY_DISABLED=1
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+# next/font scarica qui i font Geist: a runtime non serve internet.
+RUN npm run build
+
+# Production image, copy all the files and run next
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Application version, injected from the release git tag at build time
+# (see .github/workflows/publish.yml). Read at runtime, shown in the startup log.
+ARG APP_VERSION=0.0.0-dev
+ENV APP_VERSION=$APP_VERSION
+
+RUN addgroup --system --gid 1001 nodejs \
+ && adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3036
+
+ENV PORT=3036
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "server.js"]
