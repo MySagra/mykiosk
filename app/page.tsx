@@ -17,7 +17,7 @@ export default async function KioskPage() {
         <div className="flex min-w-0 items-center gap-4">
           <Logo className="size-14 shrink-0" width={56} height={56} />
           <h1 className="truncate text-3xl font-bold tracking-tight sm:text-4xl">
-            {config.title}
+            MySagra
           </h1>
         </div>
         <Clock />

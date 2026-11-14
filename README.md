@@ -19,7 +19,6 @@ status of each app (green = online, red = not responding).
 | `MYCASSA_URL`          | —         | MyCassa URL                                              |
 | `MYNUMERI_URL`         | —         | MyNumeri URL                                             |
 | `MYCOMANDA_URL`        | —         | MyComanda URL                                            |
-| `KIOSK_TITLE`          | `MySagra` | Title at the top                                         |
 | `KIOSK_CHECK_INTERVAL` | `15`      | Seconds between status checks; `0` = disabled            |
 
 URLs must be complete (`http://` or `https://`). If a value is invalid the
@@ -32,17 +31,16 @@ otherwise the status check marks the app as offline.
 ### Adding an app
 
 Add an entry to [`lib/apps.ts`](lib/apps.ts) (id, name, environment variable,
-lucide icon, color) and its description to
-[`lib/i18n/locales`](lib/i18n/locales) (`it.ts` and `en.ts`: TypeScript flags
-a missing one), then rebuild the image. The button appears once the new
+logo, color), put its square SVG logo in [`public/logos`](public/logos) and
+add its description to [`lib/i18n/locales`](lib/i18n/locales) (`it.ts` and
+`en.ts`: TypeScript flags a missing one), then rebuild the image. The button appears once the new
 variable is set.
 
 ## Language
 
 Italian and English, like the other MySagra apps (i18next). Switch with the
 **IT / EN** buttons in the bottom-right corner; the choice is saved in the
-kiosk browser (`localStorage`, key `app_lang`). The title comes from the
-`KIOSK_TITLE` environment variable and is not translated.
+kiosk browser (`localStorage`, key `app_lang`).
 
 ## Running on-site
 
@@ -54,8 +52,8 @@ cp /path/to/rootCA.pem .    # the same one MyCassa/MyNumeri mount, if the apps u
 docker compose up -d --build
 ```
 
-The kiosk is served at `http://192.168.50.100:3036`. To change buttons or
-title, edit `.env` and run `docker compose up -d` (no rebuild).
+The kiosk is served at `http://192.168.50.100:3036`. To change the buttons,
+edit `.env` and run `docker compose up -d` (no rebuild).
 
 ## Running in the cloud
 

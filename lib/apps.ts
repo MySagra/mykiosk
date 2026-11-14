@@ -1,16 +1,8 @@
-import {
-  LayoutDashboard,
-  MonitorPlay,
-  Receipt,
-  ChefHat,
-  type LucideIcon,
-} from "lucide-react";
-
 /**
  * Registro delle app mostrate nel kiosk.
  *
- * Per aggiungere un'app basta aggiungere una voce qui e la sua descrizione
- * in lib/i18n/locales (it.ts ed en.ts, controllati da TypeScript): il
+ * Per aggiungere un'app basta aggiungere una voce qui, il suo logo in
+ * public/logos/<id>.svg e la sua descrizione in lib/i18n/locales (it.ts ed en.ts, controllati da TypeScript): il
  * pulsante compare quando la variabile d'ambiente `envVar` contiene un URL
  * valido. L'ordine dell'array è l'ordine dei pulsanti.
  */
@@ -20,7 +12,8 @@ export interface AppDefinition {
   name: string;
   /** Variabile d'ambiente che contiene l'URL dell'app. */
   envVar: string;
-  icon: LucideIcon;
+  /** Logo dell'app, servito da public/ (SVG quadrato). */
+  logo: string;
   /** Colore d'accento (qualsiasi colore CSS). */
   accent: string;
 }
@@ -30,28 +23,28 @@ export const APPS = [
     id: "myamministratore",
     name: "MyAmministratore",
     envVar: "MYAMMINISTRATORE_URL",
-    icon: LayoutDashboard,
+    logo: "/logos/myamministratore.svg",
     accent: "oklch(0.852 0.199 91.936)", // giallo MySagra (--primary)
   },
   {
     id: "mycassa",
     name: "MyCassa",
     envVar: "MYCASSA_URL",
-    icon: Receipt,
+    logo: "/logos/mycassa.svg",
     accent: "oklch(0.765 0.177 163.223)", // emerald-400
   },
   {
     id: "mynumeri",
     name: "MyNumeri",
     envVar: "MYNUMERI_URL",
-    icon: MonitorPlay,
+    logo: "/logos/mynumeri.svg",
     accent: "oklch(0.746 0.16 232.661)", // sky-400
   },
   {
     id: "mycomanda",
     name: "MyComanda",
     envVar: "MYCOMANDA_URL",
-    icon: ChefHat,
+    logo: "/logos/mycomanda.svg",
     accent: "oklch(0.702 0.183 293.541)", // violet-400
   },
 ] as const satisfies readonly AppDefinition[];

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
 
 /** Locale Intl per lingua: en-GB per avere comunque l'orario a 24 ore. */
 const INTL_LOCALE: Record<string, string> = { it: "it-IT", en: "en-GB" };
@@ -24,16 +25,35 @@ export function Clock() {
   }, [i18n.language]);
 
   useEffect(() => {
-    const tick = () => setNow(new Date());
+    // Allineato all'inizio di ogni secondo, così il lampeggio resta regolare.
+    let id: number;
+    const tick = () => {
+      setNow(new Date());
+      id = window.setTimeout(tick, 1000 - (Date.now() % 1000));
+    };
     tick();
-    const id = window.setInterval(tick, 1000);
-    return () => window.clearInterval(id);
+    return () => window.clearTimeout(id);
   }, []);
+
+  const parts = now ? timeFormat.formatToParts(now) : [];
+  const hours = parts.find((part) => part.type === "hour")?.value ?? "--";
+  const minutes = parts.find((part) => part.type === "minute")?.value ?? "--";
+  // I due punti si vedono nei secondi pari e spariscono in quelli dispari.
+  const colonVisible = !now || now.getSeconds() % 2 === 0;
 
   return (
     <div className="shrink-0 text-right" aria-live="off">
       <div className="font-mono text-4xl font-semibold tabular-nums sm:text-5xl">
-        {now ? timeFormat.format(now) : "--:--"}
+        {hours}
+        <span
+          className={cn(
+            "transition-opacity duration-200 motion-reduce:opacity-100",
+            colonVisible ? "opacity-100" : "opacity-0",
+          )}
+        >
+          :
+        </span>
+        {minutes}
       </div>
       <div className="text-base text-muted-foreground first-letter:uppercase sm:text-lg">
         {now ? dateFormat.format(now) : " "}
