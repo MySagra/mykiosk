@@ -1,6 +1,6 @@
 # Stesso schema di MyCassa/MyNumeri: build multi-stage, output standalone,
-# utente non root. Node 24 LTS (il 20 delle altre app è fuori supporto).
-FROM node:24-alpine AS base
+# utente non root. Node 26 LTS: tenere in sync con .github/workflows/ci.yml.
+FROM node:26-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps

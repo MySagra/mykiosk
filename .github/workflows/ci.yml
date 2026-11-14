@@ -16,12 +16,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 2
 
       - name: Cache Next.js build
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('package-lock.json') }}-${{ github.sha }}
@@ -29,10 +29,9 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('package-lock.json') }}-
 
       - name: Setup NodeJs Environment
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          # Same major as the Dockerfile
-          node-version: 24
+          node-version: 26 # keep in sync with Dockerfile
           cache: 'npm'
 
       - name: Install dependencies
