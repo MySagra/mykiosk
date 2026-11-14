@@ -7,6 +7,10 @@ export const en: Locale = {
       italian: "Italiano",
       english: "English",
     },
+    theme: {
+      light: "Light theme",
+      dark: "Dark theme",
+    },
     apps: {
       myamministratore: { description: "Administration: menu, orders, statistics" },
       mycassa: { description: "Till: taking and paying for orders" },

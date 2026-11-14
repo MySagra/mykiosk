@@ -4,6 +4,7 @@ import { AppGrid } from "@/components/kiosk/app-grid";
 import { Clock } from "@/components/kiosk/clock";
 import { EmptyState } from "@/components/kiosk/empty-state";
 import { LanguageSwitcher } from "@/components/kiosk/language-switcher";
+import { ThemeToggle } from "@/components/kiosk/theme-toggle";
 import { APP_ENV_VARS, getKioskConfig } from "@/lib/config";
 
 export default async function KioskPage() {
@@ -32,7 +33,11 @@ export default async function KioskPage() {
         )}
       </main>
 
-      <LanguageSwitcher />
+      {/* In basso a destra, come nei login delle altre app MySagra. */}
+      <div className="fixed right-0 bottom-0 z-10 m-4 flex gap-2">
+        <LanguageSwitcher />
+        <ThemeToggle />
+      </div>
     </div>
   );
 }
