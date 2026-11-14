@@ -12,11 +12,11 @@ export interface KioskApp {
   id: string;
   name: string;
   accent: string;
+  logo: string;
   url: string;
 }
 
 export interface KioskConfig {
-  title: string;
   /** Secondi tra un controllo di stato e l'altro; 0 = disattivato. */
   checkIntervalSec: number;
   apps: KioskApp[];
@@ -36,7 +36,6 @@ const appUrl = z.preprocess(
 );
 
 const envSchema = z.object({
-  KIOSK_TITLE: z.preprocess(blankToUndefined, z.string().trim().max(80).default("MySagra")),
   KIOSK_CHECK_INTERVAL: z.preprocess(
     blankToUndefined,
     z.coerce
@@ -70,13 +69,13 @@ export function getKioskConfig(): KioskConfig {
         id: app.id,
         name: app.name,
         accent: app.accent,
+        logo: app.logo,
         url,
       });
     }
   }
 
   cached = {
-    title: parsed.data.KIOSK_TITLE,
     checkIntervalSec: parsed.data.KIOSK_CHECK_INTERVAL,
     apps,
   };

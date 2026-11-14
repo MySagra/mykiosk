@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { KioskGuard } from "@/components/kiosk/kiosk-guard";
-import { getKioskConfig } from "@/lib/config";
+import { ThemeProvider } from "@/components/theme-provider";
 import { I18nProvider } from "@/lib/i18n/I18nProvider";
 
 // next/font scarica i font in fase di build e li serve dal container:
@@ -17,12 +17,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export function generateMetadata(): Metadata {
-  return {
-    title: getKioskConfig().title,
-    icons: { icon: "/logo.svg" },
-  };
-}
+export const metadata: Metadata = {
+  title: "MySagra - Homepage",
+  icons: { icon: "/logo.svg" },
+};
 
 export const viewport: Viewport = {
   themeColor: "#000000",
@@ -37,10 +35,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="it" className="dark">
+    <html lang="it" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <KioskGuard />
-        <I18nProvider>{children}</I18nProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <KioskGuard />
+          <I18nProvider>{children}</I18nProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

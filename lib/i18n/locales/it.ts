@@ -7,6 +7,10 @@ export const it = {
       italian: "Italiano",
       english: "English",
     },
+    theme: {
+      light: "Tema chiaro",
+      dark: "Tema scuro",
+    },
     apps: {
       myamministratore: { description: "Amministrazione: menu, ordini, statistiche" },
       mycassa: { description: "Cassa: presa e pagamento degli ordini" },

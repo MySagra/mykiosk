@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState, type CSSProperties } from "react";
-import { AppWindow, ChevronRight } from "lucide-react";
+import Image from "next/image";
+import { ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { HealthResponse } from "@/app/api/health/route";
 import { Badge } from "@/components/ui/badge";
-import { getAppDefinition } from "@/lib/apps";
 import type { KioskApp } from "@/lib/config";
 import { cn } from "@/lib/utils";
 
@@ -102,7 +102,6 @@ function AppCard({ app, status }: { app: KioskApp; status?: Status }) {
   const { t } = useTranslation();
   const description = t(`apps.${app.id}.description`, { defaultValue: "" });
   const statusLabel = status ? t(`status.${status}`) : "";
-  const Icon = getAppDefinition(app.id)?.icon ?? AppWindow;
   const offline = status === "offline";
 
   return (
@@ -120,14 +119,25 @@ function AppCard({ app, status }: { app: KioskApp; status?: Status }) {
       )}
     >
       <div className="flex items-start justify-between gap-4">
+        {/* Riquadro uguale per tutte le app, dello stesso colore dello sfondo
+            pagina (su cui sta anche il logo MySagra in alto). */}
         <span
           className={cn(
-            "flex size-20 shrink-0 items-center justify-center rounded-2xl text-(--app-accent)",
+            "flex size-24 shrink-0 items-center justify-center rounded-3xl border bg-background",
             offline && "opacity-40 grayscale",
           )}
-          style={{ backgroundColor: "color-mix(in oklch, var(--app-accent) 16%, transparent)" }}
         >
-          <Icon className="size-11" strokeWidth={1.75} aria-hidden />
+          <Image
+            src={app.logo}
+            alt=""
+            width={96}
+            height={96}
+            unoptimized
+            draggable={false}
+            // Riempie il riquadro (96px meno il bordo) in entrambe le
+            // dimensioni: niente logo schiacciato né warning di next/image.
+            className="size-full"
+          />
         </span>
         {status && (
           <Badge variant="outline" className="gap-2 px-3 py-1 text-sm">
