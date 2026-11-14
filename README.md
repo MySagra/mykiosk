@@ -1,9 +1,8 @@
 # MySagra Kiosk
 
 Start page for the laptop running in kiosk mode: large buttons to the MySagra
-apps (MyAmministratore, MyCassa, MyNumeri, MyComanda), with a clock, a
-configurable footer and the status of each app (green = online, red = not
-responding).
+apps (MyAmministratore, MyCassa, MyNumeri, MyComanda), with a clock and the
+status of each app (green = online, red = not responding).
 
 - Next.js 16 (App Router), Tailwind 4, shadcn/ui, lucide: the same stack as the other MySagra apps.
 - Works **without internet**: fonts are bundled in the image, no CDN.
@@ -21,7 +20,6 @@ responding).
 | `MYNUMERI_URL`         | —         | MyNumeri URL                                             |
 | `MYCOMANDA_URL`        | —         | MyComanda URL                                            |
 | `KIOSK_TITLE`          | `MySagra` | Title at the top                                         |
-| `KIOSK_FOOTER`         | empty     | Footer text (e.g. the name of the sagra)                 |
 | `KIOSK_CHECK_INTERVAL` | `15`      | Seconds between status checks; `0` = disabled            |
 
 URLs must be complete (`http://` or `https://`). If a value is invalid the
@@ -43,8 +41,8 @@ variable is set.
 
 Italian and English, like the other MySagra apps (i18next). Switch with the
 **IT / EN** buttons in the bottom-right corner; the choice is saved in the
-kiosk browser (`localStorage`, key `app_lang`). Title and footer come from the
-environment variables and are not translated.
+kiosk browser (`localStorage`, key `app_lang`). The title comes from the
+`KIOSK_TITLE` environment variable and is not translated.
 
 ## Running on-site
 
@@ -56,8 +54,8 @@ cp /path/to/rootCA.pem .    # the same one MyCassa/MyNumeri mount, if the apps u
 docker compose up -d --build
 ```
 
-The kiosk is served at `http://192.168.50.100:3036`. To change buttons, title
-or footer, edit `.env` and run `docker compose up -d` (no rebuild).
+The kiosk is served at `http://192.168.50.100:3036`. To change buttons or
+title, edit `.env` and run `docker compose up -d` (no rebuild).
 
 ## Running in the cloud
 
@@ -68,7 +66,6 @@ Same image, different variables only (see the cloud example in
 docker run -d --name mykiosk -p 3036:3036 \
   -e MYCASSA_URL=https://cassa.yoursagra.example \
   -e MYNUMERI_URL=https://numeri.yoursagra.example \
-  -e KIOSK_FOOTER="Sagra di San Rocco" \
   mysagra-mykiosk:local
 ```
 

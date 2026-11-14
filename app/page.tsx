@@ -23,23 +23,14 @@ export default async function KioskPage() {
         <Clock />
       </header>
 
-      {/* Senza footer, spazio in fondo per il selettore lingua (fixed). */}
-      <main
-        className={`flex flex-1 flex-col justify-center px-6 sm:px-10 ${config.footer ? "pb-8" : "pb-20"}`}
-      >
+      {/* pb-20: spazio in fondo per il selettore lingua (fixed). */}
+      <main className="flex flex-1 flex-col justify-center px-6 pb-20 sm:px-10">
         {config.apps.length > 0 ? (
           <AppGrid apps={config.apps} checkIntervalSec={config.checkIntervalSec} />
         ) : (
           <EmptyState envVars={APP_ENV_VARS} />
         )}
       </main>
-
-      {config.footer && (
-        // Padding a destra (e a sinistra, per restare centrato) = larghezza del selettore lingua.
-        <footer className="min-h-17 border-t py-4 pr-40 pl-6 text-lg text-muted-foreground sm:px-40 sm:text-center">
-          {config.footer}
-        </footer>
-      )}
 
       <LanguageSwitcher />
     </div>

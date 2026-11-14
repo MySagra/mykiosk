@@ -17,7 +17,6 @@ export interface KioskApp {
 
 export interface KioskConfig {
   title: string;
-  footer: string;
   /** Secondi tra un controllo di stato e l'altro; 0 = disattivato. */
   checkIntervalSec: number;
   apps: KioskApp[];
@@ -38,7 +37,6 @@ const appUrl = z.preprocess(
 
 const envSchema = z.object({
   KIOSK_TITLE: z.preprocess(blankToUndefined, z.string().trim().max(80).default("MySagra")),
-  KIOSK_FOOTER: z.preprocess(blankToUndefined, z.string().trim().max(200).default("")),
   KIOSK_CHECK_INTERVAL: z.preprocess(
     blankToUndefined,
     z.coerce
@@ -79,7 +77,6 @@ export function getKioskConfig(): KioskConfig {
 
   cached = {
     title: parsed.data.KIOSK_TITLE,
-    footer: parsed.data.KIOSK_FOOTER,
     checkIntervalSec: parsed.data.KIOSK_CHECK_INTERVAL,
     apps,
   };
