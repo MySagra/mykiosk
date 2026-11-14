@@ -71,6 +71,25 @@ docker run -d --name mykiosk -p 3036:3036 \
 
 Put it behind the reverse proxy like the other apps.
 
+## CI and Docker image
+
+- **CI** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)): on every push
+  and pull request to `main` it runs lint, type check and build.
+- **Publish** ([`.github/workflows/publish.yml`](.github/workflows/publish.yml)):
+  on every published GitHub release (or manually) it builds the image for
+  `linux/amd64` and `linux/arm64` and pushes it to
+  `ghcr.io/mysagra/mysagra-mykiosk`, tagged with the release version and
+  `latest`. The version is shown in the container startup log.
+
+To use the published image instead of building locally, set in
+`docker-compose.yml`:
+
+```yaml
+image: ghcr.io/mysagra/mysagra-mykiosk:latest
+```
+
+and remove the `build:` section.
+
 ## Development
 
 ```bash
