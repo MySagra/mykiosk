@@ -47,6 +47,13 @@ export const APPS = [
     logo: "/logos/mycomanda.svg",
     accent: "oklch(0.702 0.183 293.541)", // violet-400
   },
+  {
+    id: "myclienti",
+    name: "MyClienti",
+    envVar: "MYCLIENTI_URL",
+    logo: "/logos/myclienti.svg",
+    accent: "oklch(0.712 0.194 13.428)", // rose-400
+  },
 ] as const satisfies readonly AppDefinition[];
 
 export type AppId = (typeof APPS)[number]["id"];

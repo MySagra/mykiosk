@@ -65,10 +65,21 @@ function useAppStatuses(appIds: string[], intervalSec: number) {
   return statuses;
 }
 
+/** Con 3 app tre colonne; altrimenti al massimo due, in un riquadro centrato. */
 function gridColumns(count: number) {
   if (count === 1) return "max-w-xl mx-auto";
-  if (count === 2 || count === 4) return "sm:grid-cols-2 max-w-6xl mx-auto";
-  return "sm:grid-cols-2 lg:grid-cols-3";
+  if (count === 3) return "sm:grid-cols-2 lg:grid-cols-3";
+  return "sm:grid-cols-2 max-w-6xl mx-auto";
+}
+
+/**
+ * Nella griglia a due colonne, con un numero dispari di app l'ultima va da
+ * sola su una nuova riga: centrata e larga come le altre (metà meno il gap).
+ */
+function lastItemClass(count: number, index: number) {
+  const twoColumns = count > 1 && count !== 3;
+  if (!twoColumns || count % 2 === 0 || index !== count - 1) return undefined;
+  return "sm:col-span-2 sm:mx-auto sm:w-[calc(50%-0.75rem)]";
 }
 
 export function AppGrid({
@@ -86,8 +97,8 @@ export function AppGrid({
 
   return (
     <ul className={cn("grid w-full grid-cols-1 gap-6", gridColumns(apps.length))}>
-      {apps.map((app) => (
-        <li key={app.id}>
+      {apps.map((app, index) => (
+        <li key={app.id} className={lastItemClass(apps.length, index)}>
           <AppCard
             app={app}
             status={showStatus ? (statuses[app.id] ?? "checking") : undefined}
@@ -111,7 +122,7 @@ function AppCard({ app, status }: { app: KioskApp; status?: Status }) {
       aria-label={`${app.name}${description ? `: ${description}` : ""}${status ? ` (${statusLabel})` : ""}`}
       style={{ "--app-accent": app.accent } as CSSProperties}
       className={cn(
-        "@container group relative flex h-full min-h-56 flex-col gap-5 overflow-hidden rounded-2xl border bg-card p-7 text-card-foreground shadow-sm",
+        "@container group relative flex h-full min-h-56 flex-col gap-5 overflow-hidden rounded-2xl border bg-card p-7 text-card-foreground shadow-sm short:min-h-0 short:gap-3 short:p-4",
         "border-t-[6px] border-t-(--app-accent)",
         "transition-[transform,opacity,background-color] duration-150 active:scale-[0.98] active:bg-accent",
         "outline-none focus-visible:ring-4 focus-visible:ring-(--app-accent)/60",
@@ -123,7 +134,7 @@ function AppCard({ app, status }: { app: KioskApp; status?: Status }) {
             pagina (su cui sta anche il logo MySagra in alto). */}
         <span
           className={cn(
-            "flex size-24 shrink-0 items-center justify-center rounded-3xl border bg-background",
+            "flex size-24 shrink-0 items-center justify-center rounded-3xl border bg-background short:size-14 short:rounded-2xl",
             offline && "opacity-40 grayscale",
           )}
         >
@@ -154,9 +165,9 @@ function AppCard({ app, status }: { app: KioskApp; status?: Status }) {
         )}
       >
         <div className="min-w-0">
-          <h2 className="text-xl font-semibold tracking-tight break-words @2xs:text-2xl @xs:text-3xl @md:text-4xl">{app.name}</h2>
+          <h2 className="text-lg font-semibold tracking-tight break-words @3xs:text-xl @2xs:text-2xl @xs:text-3xl @md:text-4xl">{app.name}</h2>
           {description && (
-            <p className="mt-2 text-lg text-muted-foreground">{description}</p>
+            <p className="mt-2 text-lg text-muted-foreground short:mt-1 short:text-base">{description}</p>
           )}
         </div>
         <ChevronRight

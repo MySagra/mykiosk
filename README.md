@@ -23,12 +23,12 @@
 
 **MyKiosk** is the start page for laptops running in kiosk mode at food events and sagre. It shows large, touch-friendly buttons to the MySagra applications and tells staff at a glance which ones are reachable.
 
-Part of the **MySagra** ecosystem, MyKiosk links to [MyAmministratore](https://github.com/MySagra/mysagra), [MyCassa](https://github.com/MySagra/mycassa), [MyNumeri](https://github.com/MySagra/mynumeri) and [MyComanda](https://github.com/MySagra/mycomanda). It is designed for on-site installations on a local network without internet access, and the same Docker image also runs in the cloud.
+Part of the **MySagra** ecosystem, MyKiosk links to [MyAmministratore](https://github.com/MySagra/mysagra), [MyCassa](https://github.com/MySagra/mycassa), [MyNumeri](https://github.com/MySagra/mynumeri), [MyComanda](https://github.com/MySagra/mycomanda) and [MyClienti](https://github.com/MySagra/myclienti). It is designed for on-site installations on a local network without internet access, and the same Docker image also runs in the cloud.
 
 ## ✨ Features
 
 ### 🎯 Core Functionality
-- **App Launcher** - Large cards for MyAmministratore, MyCassa, MyNumeri and MyComanda, each with its own logo, description and accent color
+- **App Launcher** - Large cards for MyAmministratore, MyCassa, MyNumeri, MyComanda and MyClienti, each with its own logo, description and accent color
 - **Configurable Buttons** - A card is shown only when the URL of its app is set; with no app configured, the page lists the variables to set
 - **Status Indicators** - Each card shows whether its app is online or not responding; offline apps are dimmed but stay clickable
 - **Clock** - Current time with a blinking separator and today's date
@@ -83,15 +83,17 @@ Part of the **MySagra** ecosystem, MyKiosk links to [MyAmministratore](https://g
    cp .env.example .env
    ```
 
-   Set the URL of each app to show:
+   Set the address of the MySagra server, as in the general MySagra docker compose. The app URLs are built from it with the standard ports:
    ```env
-   MYAMMINISTRATORE_URL=https://192.168.50.100:81
-   MYCASSA_URL=https://192.168.50.100
-   MYNUMERI_URL=https://192.168.50.100:3033
-   MYCOMANDA_URL=http://192.168.50.100:3035
+   SERVER_IP=192.168.50.100
+   MYAMMINISTRATORE_URL=http://${SERVER_IP}:3030
+   MYCASSA_URL=http://${SERVER_IP}:3031
+   MYNUMERI_URL=http://${SERVER_IP}:3033
+   MYCOMANDA_URL=http://${SERVER_IP}:3035
+   MYCLIENTI_URL=http://${SERVER_IP}:3034
    ```
 
-   > **Note**: An empty or missing URL hides the corresponding card. Environment variables are read by the server at runtime, never inlined in the client bundle.
+   > **Note**: An empty URL hides the corresponding card. Environment variables are read by the server at runtime, never inlined in the client bundle.
 
 4. **Run the development server**
    ```bash
@@ -118,9 +120,9 @@ To use it with Docker Compose, set `image: ghcr.io/mysagra/mysagra-mykiosk:lates
 
 ### Using Docker Compose (on-site)
 
-On the MySagra server (`192.168.50.100`):
+In a full installation MyKiosk runs from the general MySagra docker compose, which already includes it. To run it on its own, on the MySagra server:
 
-1. **Create the `.env` file** (the on-site URLs are already filled in)
+1. **Create the `.env` file** and set `SERVER_IP` to the server address
    ```bash
    cp .env.example .env
    ```
@@ -137,9 +139,11 @@ On the MySagra server (`192.168.50.100`):
 
 4. **Access the application**
 
-   The kiosk will be available at [http://192.168.50.100:3036](http://192.168.50.100:3036)
+   The kiosk will be available on port 3036 of the server, for example `http://192.168.50.100:3036`
 
 To change the buttons, edit `.env` and run `docker compose up -d`: no rebuild is needed.
+
+> **Note**: With `SERVER_IP=localhost` the links work in a browser on the same machine, but inside the container `localhost` is the container itself. The status check therefore reaches `localhost` URLs through `host.docker.internal`, which the compose file maps to the host with `extra_hosts`.
 
 > **Note**: Without `rootCA.pem`, apps served over HTTPS with the local CA are reported as not responding. The compose file mounts it and sets `NODE_EXTRA_CA_CERTS`.
 
@@ -167,17 +171,19 @@ The release version is injected at build time and printed in the container start
 
 ## 🖥️ Kiosk Setup
 
-On the kiosk laptop (Debian + cage), open the browser in kiosk mode on the MyKiosk URL, for example in the service or script that starts cage:
+On the kiosk laptop (Debian + cage), open the browser in kiosk mode on the MyKiosk URL, for example in the service or script that starts cage. With the general MySagra docker compose MyKiosk is published on port 80, so the URL is just the server address:
 
 ```bash
-cage -- chromium --kiosk --noerrdialogs --disable-translate --no-first-run http://192.168.50.100:3036
+cage -- chromium --kiosk --noerrdialogs --disable-translate --no-first-run http://192.168.50.100
 ```
 
 or with Firefox:
 
 ```bash
-cage -- firefox --kiosk http://192.168.50.100:3036
+cage -- firefox --kiosk http://192.168.50.100
 ```
+
+> **Note**: When MyKiosk runs on its own with this repository's `docker-compose.yml`, add the port: `http://192.168.50.100:3036`.
 
 > **Note**: Apps open in the same window and the kiosk has no address bar or back button. To return to the start page, use a link in the app, the `Alt+←` shortcut, or restart the browser.
 
@@ -239,10 +245,12 @@ mykiosk/
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `MYAMMINISTRATORE_URL` | MyAmministratore URL; empty hides the card | `https://192.168.50.100:81` |
-| `MYCASSA_URL` | MyCassa URL; empty hides the card | `https://192.168.50.100` |
-| `MYNUMERI_URL` | MyNumeri URL; empty hides the card | `https://192.168.50.100:3033` |
-| `MYCOMANDA_URL` | MyComanda URL; empty hides the card | `http://192.168.50.100:3035` |
+| `SERVER_IP` | Address of the MySagra server, used to build the default app URLs | `192.168.50.100` |
+| `MYAMMINISTRATORE_URL` | MyAmministratore URL; empty hides the card | `http://${SERVER_IP}:3030` |
+| `MYCASSA_URL` | MyCassa URL; empty hides the card | `http://${SERVER_IP}:3031` |
+| `MYNUMERI_URL` | MyNumeri URL; empty hides the card | `http://${SERVER_IP}:3033` |
+| `MYCOMANDA_URL` | MyComanda URL; empty hides the card | `http://${SERVER_IP}:3035` |
+| `MYCLIENTI_URL` | MyClienti URL; empty hides the card | `http://${SERVER_IP}:3034` |
 | `KIOSK_CHECK_INTERVAL` | Seconds between status checks; `0` disables them (default `15`) | `15` |
 
 > **Architecture Note**: URLs must be complete (`http://` or `https://`). All variables are validated when the container starts; an invalid value stops the container and the log names the variable to fix.

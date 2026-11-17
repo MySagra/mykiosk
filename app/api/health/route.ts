@@ -1,3 +1,4 @@
+import { lookup } from "node:dns/promises";
 import { getKioskConfig } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
@@ -34,10 +35,40 @@ function errorCode(error: unknown): string {
   return err.name;
 }
 
+/** Nome con cui un container Docker raggiunge la macchina che lo ospita. */
+const DOCKER_HOST = "host.docker.internal";
+
+let dockerHostAvailable: Promise<boolean> | undefined;
+
+/** true se DOCKER_HOST risolve (in Docker con extra_hosts host-gateway). */
+function hasDockerHost(): Promise<boolean> {
+  dockerHostAvailable ??= lookup(DOCKER_HOST).then(
+    () => true,
+    () => false,
+  );
+  return dockerHostAvailable;
+}
+
+function isLoopback(hostname: string): boolean {
+  return hostname === "localhost" || hostname === "[::1]" || hostname.startsWith("127.");
+}
+
+/**
+ * URL da usare per il controllo. Con SERVER_IP=localhost il link è giusto per
+ * il browser, ma dentro il container "localhost" è il container stesso: in quel
+ * caso il controllo passa da host.docker.internal, cioè la macchina host.
+ */
+async function checkUrl(url: string): Promise<string> {
+  const parsed = new URL(url);
+  if (!isLoopback(parsed.hostname) || !(await hasDockerHost())) return url;
+  parsed.hostname = DOCKER_HOST;
+  return parsed.toString();
+}
+
 async function probe(url: string): Promise<AppHealth> {
   const start = performance.now();
   try {
-    const res = await fetch(url, {
+    const res = await fetch(await checkUrl(url), {
       method: "GET",
       // Un redirect (es. verso il login) vuol dire che l'app risponde.
       redirect: "manual",

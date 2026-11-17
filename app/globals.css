@@ -3,6 +3,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Schermi bassi (es. portatili 1366x768): card più compatte, così anche
+   tre righe di app stanno nello schermo senza scorrere. */
+@custom-variant short (@media (max-height: 820px));
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

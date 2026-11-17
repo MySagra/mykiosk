@@ -1,5 +1,6 @@
-# Installazione on-site: il kiosk gira sul server MySagra (192.168.50.100)
-# accanto alle altre app; il portatile apre http://192.168.50.100:3036
+# MyKiosk da solo. Nell'installazione completa usa il docker compose generale,
+# che ha lo stesso servizio. Indirizzo del server e URL delle app sono nel .env
+# (vedi .env.example).
 services:
   mykiosk:
     image: mysagra-mykiosk:local
@@ -8,13 +9,21 @@ services:
       dockerfile: Dockerfile
     container_name: mykiosk
     restart: always
-    env_file:
-      - .env
     environment:
       - NODE_ENV=production
-      # Certificato della CA locale, come per le altre app: serve al
-      # controllo di stato per fidarsi degli URL https on-site.
+      # URL mostrati dal kiosk: se vuoti, il pulsante dell'app non compare
+      - MYAMMINISTRATORE_URL=${MYAMMINISTRATORE_URL-http://${SERVER_IP}:3030}
+      - MYCASSA_URL=${MYCASSA_URL-http://${SERVER_IP}:3031}
+      - MYNUMERI_URL=${MYNUMERI_URL-http://${SERVER_IP}:3033}
+      - MYCOMANDA_URL=${MYCOMANDA_URL-http://${SERVER_IP}:3035}
+      - MYCLIENTI_URL=${MYCLIENTI_URL-http://${SERVER_IP}:3034}
+      - KIOSK_CHECK_INTERVAL=${KIOSK_CHECK_INTERVAL:-15}
+      # CA locale: serve al controllo di stato per fidarsi degli URL https on-site
       - NODE_EXTRA_CA_CERTS=/app/rootCA.pem
+    # Con SERVER_IP=localhost il controllo di stato raggiunge le app
+    # sulla macchina host tramite host.docker.internal.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./rootCA.pem:/app/rootCA.pem:ro
     ports:

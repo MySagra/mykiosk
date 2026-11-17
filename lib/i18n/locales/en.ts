@@ -16,6 +16,7 @@ export const en: Locale = {
       mycassa: { description: "Till: taking and paying for orders" },
       mynumeri: { description: "Number calling and public display" },
       mycomanda: { description: "Kitchen order monitor" },
+      myclienti: { description: "Ordering from customers' phones" },
     },
     status: {
       checking: "Checking…",
