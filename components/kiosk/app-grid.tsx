@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -120,13 +120,14 @@ function AppCard({ app, status }: { app: KioskApp; status?: Status }) {
       href={app.url}
       draggable={false}
       aria-label={`${app.name}${description ? `: ${description}` : ""}${status ? ` (${statusLabel})` : ""}`}
-      style={{ "--app-accent": app.accent } as CSSProperties}
       className={cn(
         "@container group relative flex h-full min-h-56 flex-col gap-5 overflow-hidden rounded-2xl border bg-card p-7 text-card-foreground shadow-sm short:min-h-0 short:gap-3 short:p-4",
-        "border-t-[6px] border-t-(--app-accent)",
-        "transition-[transform,opacity,background-color] duration-150 active:scale-[0.98] active:bg-accent",
-        "outline-none focus-visible:ring-4 focus-visible:ring-(--app-accent)/60",
-        offline && "border-t-muted-foreground/40",
+        // Hover leggero (solo dove esiste un puntatore): la card si alza di
+        // poco, ombra più marcata e bordo giallo MySagra tenue.
+        "transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out",
+        "hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md hover:ring-2 hover:ring-primary/20",
+        "active:translate-y-0 active:scale-[0.98] active:bg-accent",
+        "outline-none focus-visible:ring-4 focus-visible:ring-primary/40",
       )}
     >
       <div className="flex items-start justify-between gap-4">
@@ -171,7 +172,7 @@ function AppCard({ app, status }: { app: KioskApp; status?: Status }) {
           )}
         </div>
         <ChevronRight
-          className="size-10 shrink-0 text-muted-foreground transition-transform group-active:translate-x-1"
+          className="size-10 shrink-0 text-muted-foreground transition-[transform,color] duration-200 ease-out group-hover:translate-x-1 group-hover:text-foreground group-active:translate-x-1"
           aria-hidden
         />
       </div>
