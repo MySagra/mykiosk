@@ -96,7 +96,7 @@ export function AppGrid({
   const showStatus = checkIntervalSec > 0;
 
   return (
-    <ul className={cn("grid w-full grid-cols-1 gap-6", gridColumns(apps.length))}>
+    <ul className={cn("grid w-full grid-cols-1 gap-3 sm:gap-6", gridColumns(apps.length))}>
       {apps.map((app, index) => (
         <li key={app.id} className={lastItemClass(apps.length, index)}>
           <AppCard
@@ -121,7 +121,14 @@ function AppCard({ app, status }: { app: KioskApp; status?: Status }) {
       draggable={false}
       aria-label={`${app.name}${description ? `: ${description}` : ""}${status ? ` (${statusLabel})` : ""}`}
       className={cn(
-        "@container group relative flex h-full min-h-56 flex-col gap-5 overflow-hidden rounded-2xl border bg-card p-7 text-card-foreground shadow-sm short:min-h-0 short:gap-3 short:p-4",
+        "@container group relative flex h-full overflow-hidden border bg-card text-card-foreground shadow-sm",
+        // Telefono: una riga compatta (logo, nome, stato), così tutte le app
+        // stanno nello schermo senza scorrere.
+        "items-center gap-3 rounded-xl p-3",
+        // Tablet: card compatte in griglia.
+        "sm:flex-col sm:items-stretch sm:gap-3 sm:rounded-2xl sm:p-4",
+        // Desktop / kiosk: card grandi, compatte solo sugli schermi bassi.
+        "lg:min-h-56 lg:gap-5 lg:p-7 short:lg:min-h-0 short:lg:gap-3 short:lg:p-4",
         // Hover leggero (solo dove esiste un puntatore): la card si alza di
         // poco, ombra più marcata e bordo giallo MySagra tenue.
         "transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out",
@@ -130,12 +137,12 @@ function AppCard({ app, status }: { app: KioskApp; status?: Status }) {
         "outline-none focus-visible:ring-4 focus-visible:ring-primary/40",
       )}
     >
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex shrink-0 items-start justify-between gap-4">
         {/* Riquadro uguale per tutte le app, dello stesso colore dello sfondo
             pagina (su cui sta anche il logo MySagra in alto). */}
         <span
           className={cn(
-            "flex size-24 shrink-0 items-center justify-center rounded-3xl border bg-background short:size-14 short:rounded-2xl",
+            "flex size-12 shrink-0 items-center justify-center rounded-xl border bg-background sm:size-14 sm:rounded-2xl lg:size-24 lg:rounded-3xl short:lg:size-14 short:lg:rounded-2xl",
             offline && "opacity-40 grayscale",
           )}
         >
@@ -146,13 +153,13 @@ function AppCard({ app, status }: { app: KioskApp; status?: Status }) {
             height={96}
             unoptimized
             draggable={false}
-            // Riempie il riquadro (96px meno il bordo) in entrambe le
-            // dimensioni: niente logo schiacciato né warning di next/image.
+            // Riempie il riquadro (meno il bordo) in entrambe le dimensioni:
+            // niente logo schiacciato né warning di next/image.
             className="size-full"
           />
         </span>
         {status && (
-          <Badge variant="outline" className="gap-2 px-3 py-1 text-sm">
+          <Badge variant="outline" className="hidden gap-2 px-3 py-1 text-sm sm:inline-flex">
             <span className={cn("size-3 rounded-full", STATUS_DOT[status])} aria-hidden />
             {statusLabel}
           </Badge>
@@ -161,18 +168,29 @@ function AppCard({ app, status }: { app: KioskApp; status?: Status }) {
 
       <div
         className={cn(
-          "flex flex-1 items-end justify-between gap-4",
+          "flex min-w-0 flex-1 items-center justify-between gap-3 sm:items-end sm:gap-4",
           offline && "opacity-40",
         )}
       >
         <div className="min-w-0">
-          <h2 className="text-lg font-semibold tracking-tight break-words @3xs:text-xl @2xs:text-2xl @xs:text-3xl @md:text-4xl">{app.name}</h2>
+          <h2 className="flex items-center gap-2 text-lg font-semibold tracking-tight break-words sm:block sm:text-lg @3xs:sm:text-xl @2xs:sm:text-2xl @xs:sm:text-3xl @md:sm:text-4xl">
+            {app.name}
+            {/* Sul telefono lo stato è solo un pallino accanto al nome. */}
+            {status && (
+              <span
+                className={cn("size-2.5 shrink-0 rounded-full sm:hidden", STATUS_DOT[status])}
+                aria-hidden
+              />
+            )}
+          </h2>
           {description && (
-            <p className="mt-2 text-lg text-muted-foreground short:mt-1 short:text-base">{description}</p>
+            <p className="hidden text-muted-foreground sm:mt-1 sm:block sm:text-base sm:whitespace-normal lg:mt-2 lg:text-lg short:lg:mt-1 short:lg:text-base">
+              {description}
+            </p>
           )}
         </div>
         <ChevronRight
-          className="size-10 shrink-0 text-muted-foreground transition-[transform,color] duration-200 ease-out group-hover:translate-x-1 group-hover:text-foreground group-active:translate-x-1"
+          className="size-5 shrink-0 text-muted-foreground transition-[transform,color] duration-200 ease-out group-hover:translate-x-1 group-hover:text-foreground group-active:translate-x-1 sm:size-8 lg:size-10"
           aria-hidden
         />
       </div>

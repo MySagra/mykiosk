@@ -43,7 +43,7 @@ export function Clock() {
 
   return (
     <div className="shrink-0 text-right" aria-live="off">
-      <div className="font-mono text-4xl font-semibold tabular-nums sm:text-5xl">
+      <div className="font-mono text-2xl font-semibold tabular-nums sm:text-5xl">
         {hours}
         <span
           className={cn(
@@ -55,7 +55,7 @@ export function Clock() {
         </span>
         {minutes}
       </div>
-      <div className="text-base text-muted-foreground first-letter:uppercase sm:text-lg">
+      <div className="text-xs text-muted-foreground first-letter:uppercase sm:text-lg">
         {now ? dateFormat.format(now) : " "}
       </div>
     </div>
