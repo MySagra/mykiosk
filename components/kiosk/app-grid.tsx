@@ -96,7 +96,7 @@ export function AppGrid({
   const showStatus = checkIntervalSec > 0;
 
   return (
-    <ul className={cn("grid w-full grid-cols-1 gap-3 sm:gap-6", gridColumns(apps.length))}>
+    <ul className={cn("grid w-full grid-cols-1 gap-2 sm:gap-6", gridColumns(apps.length))}>
       {apps.map((app, index) => (
         <li key={app.id} className={lastItemClass(apps.length, index)}>
           <AppCard
@@ -124,7 +124,7 @@ function AppCard({ app, status }: { app: KioskApp; status?: Status }) {
         "@container group relative flex h-full overflow-hidden border bg-card text-card-foreground shadow-sm",
         // Telefono: una riga compatta (logo, nome, stato), così tutte le app
         // stanno nello schermo senza scorrere.
-        "items-center gap-3 rounded-xl p-3",
+        "items-center gap-3 rounded-xl px-3 py-2.5",
         // Tablet: card compatte in griglia.
         "sm:flex-col sm:items-stretch sm:gap-3 sm:rounded-2xl sm:p-4",
         // Desktop / kiosk: card grandi, compatte solo sugli schermi bassi.
@@ -142,7 +142,7 @@ function AppCard({ app, status }: { app: KioskApp; status?: Status }) {
             pagina (su cui sta anche il logo MySagra in alto). */}
         <span
           className={cn(
-            "flex size-12 shrink-0 items-center justify-center rounded-xl border bg-background sm:size-14 sm:rounded-2xl lg:size-24 lg:rounded-3xl short:lg:size-14 short:lg:rounded-2xl",
+            "flex size-11 shrink-0 items-center justify-center rounded-xl border bg-background sm:size-14 sm:rounded-2xl lg:size-24 lg:rounded-3xl short:lg:size-14 short:lg:rounded-2xl",
             offline && "opacity-40 grayscale",
           )}
         >

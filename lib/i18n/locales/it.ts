@@ -14,7 +14,8 @@ export const it = {
     apps: {
       myamministratore: { description: "Amministrazione: menu, ordini, statistiche" },
       mycassa: { description: "Cassa: presa e pagamento degli ordini" },
-      mynumeri: { description: "Chiamata dei numeri e schermo per il pubblico" },
+      mynumeri: { description: "Gestione e chiamata dei numeri" },
+      mydisplay: { description: "Schermo dei numeri per il pubblico" },
       mycomanda: { description: "Monitor delle comande per la cucina" },
       myclienti: { description: "Ordinazione dal telefono dei clienti" },
     } satisfies Record<AppId, { description: string }>,

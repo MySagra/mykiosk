@@ -24,8 +24,8 @@ export default async function KioskPage() {
         <Clock />
       </header>
 
-      {/* pb-20: spazio in fondo per il selettore lingua (fixed). */}
-      <main className="flex flex-1 flex-col justify-center px-4 pb-20 sm:px-6 md:px-10 short:pb-16">
+      {/* Spazio in fondo per lingua e tema (fixed): 40px + 16px di margine sul telefono. */}
+      <main className="flex flex-1 flex-col justify-center px-4 pb-14 sm:px-6 sm:pb-20 md:px-10 short:sm:pb-16">
         {config.apps.length > 0 ? (
           <AppGrid apps={config.apps} checkIntervalSec={config.checkIntervalSec} />
         ) : (

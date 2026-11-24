@@ -23,7 +23,7 @@
 
 **MyKiosk** is the start page for laptops running in kiosk mode at food events and sagre. It shows large, touch-friendly buttons to the MySagra applications and tells staff at a glance which ones are reachable.
 
-Part of the **MySagra** ecosystem, MyKiosk links to [MyAmministratore](https://github.com/MySagra/mysagra), [MyCassa](https://github.com/MySagra/mycassa), [MyNumeri](https://github.com/MySagra/mynumeri), [MyComanda](https://github.com/MySagra/mycomanda) and [MyClienti](https://github.com/MySagra/myclienti). It is designed for on-site installations on a local network without internet access, and the same Docker image also runs in the cloud.
+Part of the **MySagra** ecosystem, MyKiosk links to [MyAmministratore](https://github.com/MySagra/mysagra), [MyCassa](https://github.com/MySagra/mycassa), [MyNumeri](https://github.com/MySagra/mynumeri) (with a direct link to its public display, MyDisplay), [MyComanda](https://github.com/MySagra/mycomanda) and [MyClienti](https://github.com/MySagra/myclienti). It is designed for on-site installations on a local network without internet access, and the same Docker image also runs in the cloud.
 
 ## ✨ Features
 
@@ -248,7 +248,7 @@ mykiosk/
 | `SERVER_IP` | Address of the MySagra server, used to build the default app URLs | `192.168.50.100` |
 | `MYAMMINISTRATORE_URL` | MyAmministratore URL; empty hides the card | `http://${SERVER_IP}:3030` |
 | `MYCASSA_URL` | MyCassa URL; empty hides the card | `http://${SERVER_IP}:3031` |
-| `MYNUMERI_URL` | MyNumeri URL; empty hides the card | `http://${SERVER_IP}:3033` |
+| `MYNUMERI_URL` | MyNumeri URL; empty hides the card, and the MyDisplay card with it (MyDisplay opens `MYNUMERI_URL` + `/display`) | `http://${SERVER_IP}:3033` |
 | `MYCOMANDA_URL` | MyComanda URL; empty hides the card | `http://${SERVER_IP}:3035` |
 | `MYCLIENTI_URL` | MyClienti URL; empty hides the card | `http://${SERVER_IP}:3034` |
 | `KIOSK_CHECK_INTERVAL` | Seconds between status checks; `0` disables them (default `15`) | `15` |
@@ -261,6 +261,8 @@ mykiosk/
 2. Put its square SVG logo in [`public/logos`](public/logos)
 3. Add its description to [`lib/i18n/locales`](lib/i18n/locales) (`it.ts` and `en.ts`; TypeScript flags a missing one)
 4. Rebuild the image: the card appears once the new variable is set
+
+For a direct link to a page of another app (like MyDisplay), use `from: { app, path }` instead of an environment variable: the card follows that app and opens its URL plus `path`.
 
 ## 🔄 Continuous Integration
 

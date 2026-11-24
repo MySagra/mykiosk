@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { APPS } from "@/lib/apps";
 
+/** Variabili d'ambiente degli URL, nell'ordine dei pulsanti. */
+const APP_ENV_VARS_LIST: string[] = APPS.flatMap((app) =>
+  "envVar" in app ? [app.envVar] : [],
+);
+
 /**
  * Configurazione a runtime letta da process.env (solo lato server).
  * Nessuna variabile NEXT_PUBLIC_*: la stessa immagine Docker si configura
@@ -45,10 +50,15 @@ const envSchema = z.object({
       .max(3600)
       .default(15),
   ),
-  ...Object.fromEntries(APPS.map((app) => [app.envVar, appUrl])),
+  ...Object.fromEntries(APP_ENV_VARS_LIST.map((name) => [name, appUrl])),
 });
 
 let cached: KioskConfig | undefined;
+
+/** URL di una pagina di un'altra app: il suo URL (senza "/" finale) più il percorso. */
+function joinPath(base: string, path: string): string {
+  return base.replace(/\/+$/, "") + path;
+}
 
 export function getKioskConfig(): KioskConfig {
   if (cached) return cached;
@@ -61,10 +71,17 @@ export function getKioskConfig(): KioskConfig {
   }
 
   const env = parsed.data as Record<string, unknown>;
+  const urls = new Map<string, string>();
   const apps: KioskApp[] = [];
   for (const app of APPS) {
-    const url = env[app.envVar];
+    // Le app con `from` seguono l'app a cui puntano: nascoste se lei è nascosta.
+    const parentUrl = "from" in app ? urls.get(app.from.app) : undefined;
+    const url =
+      "envVar" in app
+        ? env[app.envVar]
+        : parentUrl && joinPath(parentUrl, app.from.path);
     if (typeof url === "string") {
+      urls.set(app.id, url);
       apps.push({
         id: app.id,
         name: app.name,
@@ -83,4 +100,4 @@ export function getKioskConfig(): KioskConfig {
 }
 
 /** Nomi delle variabili per gli URL, per il messaggio "nessuna app configurata". */
-export const APP_ENV_VARS: string[] = APPS.map((app) => app.envVar);
+export const APP_ENV_VARS: string[] = APP_ENV_VARS_LIST;

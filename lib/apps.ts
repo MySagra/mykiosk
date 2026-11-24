@@ -4,19 +4,31 @@
  * Per aggiungere un'app basta aggiungere una voce qui, il suo logo in
  * public/logos/<id>.svg e la sua descrizione in lib/i18n/locales (it.ts ed en.ts, controllati da TypeScript): il
  * pulsante compare quando la variabile d'ambiente `envVar` contiene un URL
- * valido. L'ordine dell'array è l'ordine dei pulsanti.
+ * valido. Un collegamento diretto a una pagina di un'altra app usa invece
+ * `from`: compare insieme a quell'app, con il suo URL più `path`.
+ * L'ordine dell'array è l'ordine dei pulsanti.
  */
-export interface AppDefinition {
+interface AppBase {
   /** Identificatore stabile, usato anche come chiave in /api/health. */
   id: string;
   name: string;
-  /** Variabile d'ambiente che contiene l'URL dell'app. */
-  envVar: string;
   /** Logo dell'app, servito da public/ (SVG quadrato). */
   logo: string;
   /** Colore d'accento (qualsiasi colore CSS). */
   accent: string;
 }
+
+export type AppDefinition = AppBase &
+  (
+    | {
+        /** Variabile d'ambiente che contiene l'URL dell'app. */
+        envVar: string;
+      }
+    | {
+        /** Pagina di un'altra app: il suo id e il percorso da aggiungere al suo URL. */
+        from: { app: string; path: string };
+      }
+  );
 
 export const APPS = [
   {
@@ -39,6 +51,14 @@ export const APPS = [
     envVar: "MYNUMERI_URL",
     logo: "/logos/mynumeri.svg",
     accent: "oklch(0.746 0.16 232.661)", // sky-400
+  },
+  {
+    // Schermo pubblico di MyNumeri, aperto direttamente.
+    id: "mydisplay",
+    name: "MyDisplay",
+    from: { app: "mynumeri", path: "/display" },
+    logo: "/logos/mydisplay.svg",
+    accent: "oklch(0.746 0.16 232.661)", // come MyNumeri
   },
   {
     id: "mycomanda",

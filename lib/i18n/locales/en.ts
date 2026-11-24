@@ -14,7 +14,8 @@ export const en: Locale = {
     apps: {
       myamministratore: { description: "Administration: menu, orders, statistics" },
       mycassa: { description: "Till: taking and paying for orders" },
-      mynumeri: { description: "Number calling and public display" },
+      mynumeri: { description: "Number management and calling" },
+      mydisplay: { description: "Public number display screen" },
       mycomanda: { description: "Kitchen order monitor" },
       myclienti: { description: "Ordering from customers' phones" },
     },
